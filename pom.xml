@@ -24,7 +24,7 @@
 		<sonar.host.url>http://13.233.164.143:9000/</sonar.host.url>
 		<sonar.login>admin</sonar.login>
 		<sonar.password>admin</sonar.password>
-		<sonar.organization>sarikatechnologies</sonar.organization>
+		<!--<sonar.organization>sarikatechnologies</sonar.organization>-->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
