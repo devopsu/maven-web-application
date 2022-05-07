@@ -1,0 +1,64 @@
+pipeline    //(As scripted way start from node() it start from pipeline{})
+{
+agent any                         //(if dont specify any node name in scripted way it takes by default master node,same way if you specify "agent any" it will it is run in the master instance 
+
+tools{                          //specify tool name maven'version mention here which you want to specify '
+maven 'maven 3.8.4'
+}
+triggers {                     //-it is used to enable pool scm
+  pollSCM('* * * * *')
+}
+options {
+  timestamps()
+  //discard old build 
+  buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
+}
+
+//Get the code from github
+stages{
+    stage('CheckoutCode'){
+steps
+{ 
+git branch: 'development', credentialsId: 'e9e29005-ea32-41ee-8ba4-31c3b556149c', url: 'https://github.com/devopsu/maven-web-application.git'
+}
+} 
+
+//do the build
+stage('Build')
+{
+steps{
+sh "mvn clean package"
+}
+}
+
+//Execute SonarQube Report
+stage('sonarQubeReport')
+{
+steps
+{
+sh "mvn clean sonar:sonar"
+}
+}
+//upload Artifact into Nexus
+stage('UploadArtifactIntoNexusServer')
+{
+steps
+{
+sh "mvn clean deploy"
+}
+}
+//Deploy application into Tomcat Server
+stage('DeployAppIntoTomcatServer')
+{
+steps
+{
+sshagent(['a6784d4f-1685-4299-986e-047a3ae5ca59']) 
+{
+sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.235.90.208:/opt/apache-tomcat-9.0.62/webapps/"
+}
+ }
+  }
+
+}//stages closing
+}//pipeline closing
+
