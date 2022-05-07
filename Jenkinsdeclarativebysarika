@@ -6,8 +6,8 @@ tools{                          //specify tool name maven'version mention here w
 maven 'maven 3.8.4'
 }
 triggers {                     //-it is used to enable pool scm
-  //pollSCM('* * * * *')
-   cron('* * * * *')
+  pollSCM('* * * * *')
+   //cron('* * * * *')
 }
 options {
   timestamps()
